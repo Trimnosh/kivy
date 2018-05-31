@@ -163,6 +163,8 @@ class TuioMotionEventProvider(MotionEventProvider):
     def _update(self, dispatch_fn, value):
         oscpath, args, types = value
         command = args[0]
+        if type(command) == bytes:
+            command = command.decode("utf8")
 
         # verify commands
         if command not in ['alive', 'set']:
@@ -171,6 +173,10 @@ class TuioMotionEventProvider(MotionEventProvider):
         # move or create a new touch
         if command == 'set':
             id = args[1]
+
+            if type(id) == bytes:
+                id = id.decode("utf8")
+
             if id not in self.touches[oscpath]:
                 # new touch
                 touch = TuioMotionEventProvider.__handlers__[oscpath](
