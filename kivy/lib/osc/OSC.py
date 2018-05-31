@@ -333,17 +333,21 @@ class CallbackManager:
         """Sends decoded OSC data to an appropriate calback"""
         if not message or len(message) == 0: # ignore empty messages
             return
+
+        if type(message[0]) == bytes:
+            message[0] = message[0].decode("utf8")
+
         if type(message[0]) == list :
             # smells like nested messages
             for msg in message :
                 self.dispatch(msg, source)
-        elif type(message[0]) == str :
+        elif type(message[0]) == str:
             # got a single message
             try:
                 address = message[0]
-                if self.callbacks.has_key(address):
+                if address in self.callbacks.keys():
                     callbackfunction = self.callbacks[address]
-                elif self.callbacks.has_key('default'):
+                elif default in self.callbacks.keys():
                     callbackfunction = self.callbacks['default']
                 else:
                     print('address %s not found ' % address)
